@@ -13,6 +13,9 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true
   },
+  token: {
+    type: String,
+  },
   user_PW: {
     type: String,
     required: true
@@ -20,6 +23,6 @@ const userSchema = new mongoose.Schema({
 });
 
 // 모델 생성
-const User = mongoose.model('user', userSchema);
+const User = mongoose.model('User', userSchema);
 
 module.exports = User;
