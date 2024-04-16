@@ -1,22 +1,11 @@
 {
-<<<<<<< HEAD
-  "name": "rc-server",
-=======
   "name": "change-rent",
->>>>>>> f1b05b2c57a0703107a1c927f6da18dede94f411
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-<<<<<<< HEAD
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "express": "^4.19.2"
-=======
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -25,9 +14,7 @@
     "express": "^4.19.2",
     "http": "^0.0.1-security",
     "mongoose": "^8.3.1",
-    "moongoose": "^0.0.5",
     "nodemon": "^3.1.0",
     "socket.io": "^4.7.5"
->>>>>>> f1b05b2c57a0703107a1c927f6da18dede94f411
   }
 }

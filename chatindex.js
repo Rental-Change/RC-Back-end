@@ -6,7 +6,9 @@ require("dotenv").config();
 
 const httpServer = createServer(app);
 
+// http를 사용해 웹 소켓 서버 생성
 const io = new Server(httpServer,{
+    // 웹 소켓 접근 제어
     cors:{
         origin: "http://localhost:3000",
     },
