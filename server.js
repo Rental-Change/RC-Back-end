@@ -1,29 +1,33 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const User = require('./Models/User');
-const bodyParser = require('body-parser');
-const path = require('path');
-const cors = require("cors")
-const app = express()
-app.use(cors());
+//express 모듈 불러오기
+const express = require("express");
+const api = require("./api/api");
 
+//express 사용
+const app = express(); 
 
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 
-mongoose.connect(process.env.BD, {useNewUrlParser: true,  useUnifiedTopology: true}).then(() => {
-  console.log('Connected to MongoDB');
-}).catch((err) => {
-  console.error('Error connecting to MongoDB:', err);
-});
+app.use("/api", api)
 
-app.get('/homepage', (req, res) => {
-  res.send('This is the homepage');
-});
+const { swaggerUi, specs } = require("./swagger/swagger")
 
-app.get('/', (req, res) => {
-  res.render('hello'); // Renders index.ejs in views directory
-});
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs))
 
-// Start the server
-app.listen(process.env.PORT, () => {
-  console.log(`Server is running on port ${process.env.PORT}`);
-});
+/**
+ * 파라미터 변수 뜻
+ * req : request 요청
+ * res : response 응답
+ */
+
+/**
+ * @path {GET} http://localhost:3000/
+ * @description 요청 데이터 값이 없고 반환 값이 있는 GET Method
+ */
+app.get("/", (req, res) => {
+  //Hello World 데이터 반환
+  res.send("Hello World")
+})
+
+// http listen port 생성 서버 실행
+app.listen(5001, () => console.log("개발이 취미인 남자 :)"))
