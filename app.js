@@ -24,7 +24,8 @@ app.get('/', (req, res) => {
 });
 
 // 회원가입
-app.post('/user', userController.createUser);
+app.post('/signup', userController.createUser);
+app.post('/signin', userController.loginUser);
 
 // 서버 시작
 app.listen(PORT, () => {
