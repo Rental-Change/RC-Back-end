@@ -1,13 +1,12 @@
 //Post.js
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-const User = require('./User')
 
 const postSchema = new mongoose.Schema({
-    user_ID: { 
+    user: { 
         type: mongoose.Schema.Types.ObjectId,
             ref: 'User',
-            required: true 
+            required: false 
         },
     postTitle: { 
         type: String, 
@@ -17,16 +16,8 @@ const postSchema = new mongoose.Schema({
         type: String 
     },
     postImage: { 
-        type: String,
-        required: true 
-    },
-    postStatus: {
-        type: String,
-        required: true
-    },
-    postFavorites: {
-        type: String,
-        required: true
+        data: Buffer,
+        contentType: String,
     },
 
   });

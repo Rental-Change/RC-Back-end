@@ -29,9 +29,9 @@ app.get("/", (req, res) => {
 })
 
 // 회원가입
-app.use('/signin', signupRouter);
+app.use('/signup', signupRouter);
 // 로그인
-app.use('/', loginRouter);
+app.use('/signin', loginRouter);
 //매장 등록 및 리스트
 app.use('/posts', postsRouter);
 

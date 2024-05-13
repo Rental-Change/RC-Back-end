@@ -1,6 +1,8 @@
 //postControlloer.js
 const Post = require('../Models/Post')
 const bcrypt = require("bcrypt")
+const upload = require('../utils/upload');
+const multer = require('multer');
 //목록 접근
 exports.getPost = async(req, res, next) => {
     if (req.query.write) {
@@ -15,15 +17,21 @@ exports.getPost = async(req, res, next) => {
     }  
 };
 //작성
-exports.createPost = async (req, res,next) => {
-    const {id, title, content, image} = req.body;
+exports.createPost = async(req, res,next) => {
+    const {userID, title, content} = req.body;
+    const postImage = {
+        data: req.file,//.buffer,
+        contentType: req.file,//.mimetype,
+      };
     try {
-         await Post.create({
-            user_ID : id,
+        const post = new Post({
+            user : userID,
             postTitle : title,
             postContent : content,
-            postImage : image,
+            postImage : postImage,
         });
+        console.log(post)
+        await post.save()
         res.redirect('/');
     } catch(err) {
         next(err);
