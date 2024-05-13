@@ -1,68 +1,70 @@
+//postControlloer.js
 const express = require('express')
 const router = express.Router();
-const userID = require('../Models/User')
 const Post = require('../Models/Post')
 const bcrypt = require("bcrypt")
 //목록 접근
-router.get('/', async(req, res, next) => {
+router.get('/posts', async(req, res, next) => {
     if (req.query.write) {
         res.render('posts/edit');
         return;
     }
     try {
-        const posts = await Post.find({});
-        res.render('posts/list', { posts });
+        const post = await Post.find({});
+        res.render('posts/list', { Post });
     } catch (err) {
         next(err);
     }  
 })
 //작성
-router.post('/', async (req, res,next) => {
-        const {title, content} = req.body;
-        try {
-            await Post.create({
-                title,
-                content,
-            });
-            res.redirect('/');
-        } catch(err) {
-            next(err);
-        }
+router.post('/posts/create', async (req, res,next) => {
+    const {id, title, content, image} = req.body;
+    try {
+         await Post.create({
+            user_ID : id,
+            postTitle : title,
+            postContent : content,
+            postImage : image,
+        });
+        res.redirect('/posts/create');
+    } catch(err) {
+        next(err);
+    }
 });
-router.get('/:userID', async (req, res, next) => {
-    const { userID } = req.params;
-    const post = await Post.findOne({ userID });
+router.get('/posts/:userID', async (req, res, next) => {
+    const { id } = req.params;
+    const post = await Post.findOne({ user_ID : id });
     if (!post) {
         next(new Error('Post NotFound'));
         return;
     }
     //수정페이지
     if (req.query.edit) {
-        res.render('posts/edit', { post });
+        res.render('posts/edit', { Post });
         return;
     }
-    res.render('posts/view', { post });
+    res.render('posts/view', { Post });
 }); 
 //수정
-router.post('/:userID', async(req, res, next) => {
-    const {userID} = req.params;
-    const {title, content} = req.body;
+router.post('/posts/:userID', async(req, res, next) => {
+    const {id} = req.params;
+    const {title, content, image} = req.body;
     
     try {
-        const post = await Post.findOneAndUpdate({ userID }, { title, content });
+        const post = await Post.findOneAndUpdate({ user_ID : id}, { postTitle : title, postContent : content, postImage : image});
         if (!post) {
             throw new Error('Post not found');
         }
-        res.redirect(`/posts/${userID}`);
+        res.redirect('/posts/${userID}');
     } catch (err) {
         next(err);
     }
 });
 //삭제
-router.delete('/:userID', async (req, res, next) => {
-    const {userID} = req.params;
+router.delete('/posts/:userID', async (req, res, next) => {
+    const {id} = req.params;
     try {
-        await Post.deleteOne({ userID });
+        await Post.deleteOne({ user_ID : id });
         res.send('OK');
 
     } catch (err){

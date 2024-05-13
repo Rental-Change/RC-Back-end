@@ -1,18 +1,34 @@
+//Post.js
 const mongoose = require('mongoose');
+const { Schema } = mongoose;
 const User = require('./User')
 
 const postSchema = new mongoose.Schema({
-    User,
-    title: { 
+    user_ID: { 
+        type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            required: true 
+        },
+    postTitle: { 
         type: String, 
         required: true 
     },
-    image: { 
+    postContent: { 
+        type: String 
+    },
+    postImage: { 
         type: String,
         required: true 
     },
-    content: { 
-        type: String },
+    postStatus: {
+        type: String,
+        required: true
+    },
+    postFavorites: {
+        type: String,
+        required: true
+    },
+
   });
 
 const Post = mongoose.model('Post', postSchema);

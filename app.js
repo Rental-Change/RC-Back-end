@@ -5,6 +5,9 @@ require('dotenv').config()
 const cors = require("cors")
 const app = express()
 const userController = require("./controller/userController")
+const listViewController = require("./controller/listViewController")
+var postsRouter = require('./controller/postController')
+
 
 app.use(express.json())
 app.use(cors())
@@ -23,10 +26,22 @@ app.get("/", (req, res) => {
   //Hello World 데이터 반환
   res.send("Hello World")
 })
+
+//게시물 전부 출력
+//app.post("/",listViewController.allList);
+
 //회원가입
 app.post('/signup', userController.createUser);
+
 //로그인
 app.post('/signin', userController.loginUser);
+
+//게시글 관련
+app.post('/my-page', postsRouter);
+//메인 post 출력
+app.post('/', listViewController.allList);
+
+
 // http listen port 생성 서버 실행
 app.listen(PORT, () => {
   console.log(`서버가 http://localhost:${PORT} 포트에서 실행 중입니다.`);
