@@ -5,11 +5,11 @@ const { Schema } = mongoose;
 const chatSchema = new mongoose.Schema({
   chat: String,
   user: {
-    id: {
+    user_ID: {
         type: mongoose.Schema.ObjectId,
         ref: "User",
     },
-    name: String,
+    user_Name: String,
   },
 },
   {timestmap: true }

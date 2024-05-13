@@ -4,9 +4,10 @@ const mongoose = require("mongoose")
 require('dotenv').config()
 const cors = require("cors")
 const app = express()
-const userController = require("./controller/userController")
-const listViewController = require("./controller/listViewController")
-var postsRouter = require('./controller/postController')
+const chatindex = require('./chatindex')
+const loginRouter = require("./routers/loginRouter")
+const signupRouter = require("./routers/signupRouter")
+var postsRouter = require('./routers/postsRouter')
 
 
 app.use(express.json())
@@ -27,20 +28,12 @@ app.get("/", (req, res) => {
   res.send("Hello World")
 })
 
-//게시물 전부 출력
-//app.post("/",listViewController.allList);
-
-//회원가입
-app.post('/signup', userController.createUser);
-
-//로그인
-app.post('/signin', userController.loginUser);
-
-//게시글 관련
-app.post('/my-page', postsRouter);
-//메인 post 출력
-app.post('/', listViewController.allList);
-
+// 회원가입
+app.use('/signin', signupRouter);
+// 로그인
+app.use('/', loginRouter);
+//매장 등록 및 리스트
+app.use('/posts', postsRouter);
 
 // http listen port 생성 서버 실행
 app.listen(PORT, () => {

@@ -65,3 +65,9 @@ exports.loginUser = async (req, res) => {
     res.status(500).json({ success: false, message: '로그인 중 에러가 발생했습니다.' });
   }
 };
+
+exports.checkUser = async(sid)=>{
+  const user = await User.findOne({token:sid})
+  if(!user) throw new Error("user not found")
+  return user;
+}

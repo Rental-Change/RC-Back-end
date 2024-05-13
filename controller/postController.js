@@ -1,10 +1,8 @@
 //postControlloer.js
-const express = require('express')
-const router = express.Router();
 const Post = require('../Models/Post')
 const bcrypt = require("bcrypt")
 //목록 접근
-router.get('/posts', async(req, res, next) => {
+exports.getPost = async(req, res, next) => {
     if (req.query.write) {
         res.render('posts/edit');
         return;
@@ -15,9 +13,9 @@ router.get('/posts', async(req, res, next) => {
     } catch (err) {
         next(err);
     }  
-})
+};
 //작성
-router.post('/posts/create', async (req, res,next) => {
+exports.createPost = async (req, res,next) => {
     const {id, title, content, image} = req.body;
     try {
          await Post.create({
@@ -26,12 +24,12 @@ router.post('/posts/create', async (req, res,next) => {
             postContent : content,
             postImage : image,
         });
-        res.redirect('/posts/create');
+        res.redirect('/');
     } catch(err) {
         next(err);
     }
-});
-router.get('/posts/:userID', async (req, res, next) => {
+};
+exports.get = async (req, res, next) => {
     const { id } = req.params;
     const post = await Post.findOne({ user_ID : id });
     if (!post) {
@@ -44,9 +42,9 @@ router.get('/posts/:userID', async (req, res, next) => {
         return;
     }
     res.render('posts/view', { Post });
-}); 
+}; 
 //수정
-router.post('/posts/:userID', async(req, res, next) => {
+exports.editPost = async(req, res, next) => {
     const {id} = req.params;
     const {title, content, image} = req.body;
     
@@ -59,9 +57,9 @@ router.post('/posts/:userID', async(req, res, next) => {
     } catch (err) {
         next(err);
     }
-});
+};
 //삭제
-router.delete('/posts/:userID', async (req, res, next) => {
+exports.deletePost = async (req, res, next) => {
     const {id} = req.params;
     try {
         await Post.deleteOne({ user_ID : id });
@@ -70,6 +68,4 @@ router.delete('/posts/:userID', async (req, res, next) => {
     } catch (err){
         next(err);
     }
-});
-
-module.exports = router;
+};
