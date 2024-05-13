@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const User = require('./User');
 
 const postSchema = new mongoose.Schema({
     user: { 
@@ -16,9 +17,6 @@ const postSchema = new mongoose.Schema({
     },
     content: { 
         type: String },
-    tag: { 
-        type: String 
-    }
   });
 
 const Post = mongoose.model('Post', postSchema);

@@ -1,33 +1,42 @@
-const cors = require("cors");
-const express = require('express');
-const app = express();
-const userController = require('./controller/userController')
+//express 모듈 불러오기
+const express = require("express")
+const mongoose = require("mongoose")
+require('dotenv').config()
+const cors = require("cors")
+const app = express()
+const userController = require("./controller/userController")
+var postController = require('./controller/postController')
+
+
+app.use(express.json())
+app.use(cors())
+
 const PORT = process.env.PORT || 5001;
-const mongoose = require('mongoose');
-const DB = "mongodb+srv://lgh0385hh:PEjPdAIA2iRoeDRJ@cluster0.r68uyyf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const DBuri = "mongodb+srv://lgh0385hh:PEjPdAIA2iRoeDRJ@cluster0.r68uyyf.mongodb.net/Cluster0?retryWrites=true&w=majority&appName=Cluster0";
 
 
-mongoose.connect(DB, {useNewUrlParser: true,  useUnifiedTopology: true}).then(() => {
+mongoose.connect(DBuri).then(() => {
   console.log('Connected to MongoDB');
 }).catch((err) => {
   console.error('Error connecting to MongoDB:', err);
 });
 
-
-// 미들웨어 설정
-app.use(express.json());
-app.use(cors());
-
-
-app.get('/', (req, res) => {
-  res.send('백엔드 서버가 동작 중입니다.');
-});
-
-// 회원가입
+app.get("/", (req, res) => {
+  //Hello World 데이터 반환
+  res.send("Hello World")
+})
+//회원가입
 app.post('/signup', userController.createUser);
+//로그인
 app.post('/signin', userController.loginUser);
+//게시글 목록
+app.use('/posts', postController);
 
-// 서버 시작
+
+
+
+// http listen port 생성 서버 실행
 app.listen(PORT, () => {
   console.log(`서버가 http://localhost:${PORT} 포트에서 실행 중입니다.`);
 });
+module.exports = app
