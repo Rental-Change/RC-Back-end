@@ -1,9 +1,5 @@
 const User = require('../Models/User');
 const bcrypt = require("bcrypt");
-const jwt = require('jsonwebtoken');
-const crypto = require('crypto');
-// JWT 생성을 위한 비밀키 생성
-const secretKey = crypto.randomBytes(32).toString('hex');
 
 exports.createUser = async (req, res) => {
   
@@ -54,9 +50,6 @@ exports.loginUser = async (req, res) => {
     if (!isPasswordValid) {
       return res.status(401).json({ success: false, message: '비밀번호가 올바르지 않습니다.' });
     }
-
-    // JWT 생성
-    const token = jwt.sign({userId: user._id}, secretKey, { expiresIn: '1h'});
 
     // userID & JWT 전송
     res.status(200).json({userID: id, token });

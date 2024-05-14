@@ -6,12 +6,12 @@ const multer = require('multer');
 //목록 접근
 exports.getPost = async(req, res, next) => {
     if (req.query.write) {
-        res.render('posts/edit');
+        res.render('/posts/edit');
         return;
     }
     try {
         const post = await Post.find({});
-        res.render('posts/list', { Post });
+        res.render('/posts', { post });
     } catch (err) {
         next(err);
     }  
@@ -32,45 +32,51 @@ exports.createPost = async(req, res,next) => {
         });
         console.log(post)
         await post.save()
-        res.redirect('/');
+        res.redirect('/posts');
     } catch(err) {
         next(err);
     }
 };
-exports.get = async (req, res, next) => {
-    const { id } = req.params;
-    const post = await Post.findOne({ user_ID : id });
+exports.getEdit = async (req, res, next) => {
+    const { userID } = req.params;
+    const post = await Post.findOne({ user_ID : userID });
+    console.log(post)
     if (!post) {
         next(new Error('Post NotFound'));
         return;
     }
     //수정페이지
     if (req.query.edit) {
-        res.render('posts/edit', { Post });
+        res.render('/posts/edit', { post });
         return;
     }
-    res.render('posts/view', { Post });
+    res.render('/posts', { post });
 }; 
 //수정
 exports.editPost = async(req, res, next) => {
-    const {id} = req.params;
-    const {title, content, image} = req.body;
+    const { userID } = req.params;
+    const { title, content } = req.body;
+    const image = {
+        data: req.file,//.buffer,
+        contentType: req.file,//.mimetype,
+      };
     
     try {
-        const post = await Post.findOneAndUpdate({ user_ID : id}, { postTitle : title, postContent : content, postImage : image});
+        const post = await Post.findOneAndUpdate({ user_ID : userID }, { postTitle : title, postContent : content, postImage : image});
+        console.log(post)
         if (!post) {
             throw new Error('Post not found');
         }
-        res.redirect('/posts/${userID}');
+        res.redirect(`/posts/${userID}`);
     } catch (err) {
         next(err);
     }
 };
 //삭제
 exports.deletePost = async (req, res, next) => {
-    const {id} = req.params;
+    const {userID} = req.params;
     try {
-        await Post.deleteOne({ user_ID : id });
+        await Post.deleteOne({ user_ID : userID });
         res.send('OK');
 
     } catch (err){

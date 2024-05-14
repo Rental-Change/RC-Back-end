@@ -19,6 +19,9 @@ const postSchema = new mongoose.Schema({
         data: Buffer,
         contentType: String,
     },
+    postStatus: String,
+
+    postLike: Boolean,
 
   });
 
