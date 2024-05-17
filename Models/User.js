@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const { Schema } = mongoose;
 
 // 유저 정보를 담을 스키마 정의
 const userSchema = new mongoose.Schema({

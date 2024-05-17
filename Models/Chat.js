@@ -10,6 +10,10 @@ const chatSchema = new mongoose.Schema({
     },
     user_Name: String,
   },
+  room: {
+    type: mongoose.Schema.ObjectId,
+    ref: "Room",
+  },
 },
   {timestmap: true }
 );

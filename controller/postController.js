@@ -1,38 +1,47 @@
 //postControlloer.js
 const Post = require('../Models/Post')
-const bcrypt = require("bcrypt")
-const upload = require('../utils/upload');
-const multer = require('multer');
-//목록 접근
-exports.getPost = async(req, res, next) => {
-    if (req.query.write) {
-        res.render('/posts/edit');
-        return;
-    }
-    try {
-        const post = await Post.find({});
-        res.render('/posts', { post });
-    } catch (err) {
-        next(err);
-    }  
-};
+const upload = require('../utils/upload')
+
+// //목록 접근
+// exports.getPost = async(req, res, next) => {
+//     if (req.query.write) {
+//         res.render('/posts/edit');
+//         return;
+//     }
+//     try {
+//         const post = await Post.find({});
+//         res.render('/posts', { post });
+//     } catch (err) {
+//         next(err);
+//     }  
+// };
 //작성
 exports.createPost = async(req, res,next) => {
-    const {userID, title, content} = req.body;
-    const postImage = {
-        data: req.file,//.buffer,
-        contentType: req.file,//.mimetype,
-      };
+    upload.single('postImage') 
     try {
+        if (!req.file) {
+            return res.status(400).json({ error: 'No file uploaded' });
+        }
+
+        console.log("받은 파일 데이터: ", req.file)
+
+        const {userID, title, content} = req.body;
+        const postImage = {
+            data: req.file.buffer,
+            contentType: req.file.mimetype,
+          };
+    
         const post = new Post({
             user : userID,
             postTitle : title,
             postContent : content,
             postImage : postImage,
         });
-        console.log(post)
+        
+        console.log("받은 데이터: ", post)
         await post.save()
         res.redirect('/posts');
+
     } catch(err) {
         next(err);
     }

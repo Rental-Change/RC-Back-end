@@ -1,5 +1,7 @@
 const User = require('../Models/User');
 const bcrypt = require("bcrypt");
+const jwt = require('jsonwebtoken'); // jwt 토큰 사용을 위해 모듈 불러오기
+const { generateToken } = require('../token/jwt');
 
 exports.createUser = async (req, res) => {
   
@@ -50,9 +52,16 @@ exports.loginUser = async (req, res) => {
     if (!isPasswordValid) {
       return res.status(401).json({ success: false, message: '비밀번호가 올바르지 않습니다.' });
     }
-
+    // 유저 id, 관리자 여부 객체로 토큰 페이로드 정보 생성
+    const payload = {
+      userId: user.userId,
+      isAdmin: user.isAdmin,
+      };
+    // jwt.js에서 작성된 토큰 생성 코드 실행
+    const token = generateToken(payload);
     // userID & JWT 전송
-    res.status(200).json({userID: id, token });
+    res.cookie('token', token, { httpOnly: true, maxAge: 3600000 });
+    res.json({ message: '성공적으로 로그인 되었습니다.', userID: id, token });
 
   } catch (error) {
     res.status(500).json({ success: false, message: '로그인 중 에러가 발생했습니다.' });

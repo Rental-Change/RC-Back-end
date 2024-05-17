@@ -1,4 +1,4 @@
-//express 모듈 불러오기
+//app.js
 const express = require("express")
 const mongoose = require("mongoose")
 require('dotenv').config()
@@ -9,7 +9,6 @@ const app = express()
 app.use(express.json())
 app.use(cors())
 
-const PORT = process.env.PORT || 5001;
 const DBuri = "mongodb+srv://lgh0385hh:PEjPdAIA2iRoeDRJ@cluster0.r68uyyf.mongodb.net/Cluster0?retryWrites=true&w=majority&appName=Cluster0";
 
 mongoose.connect(DBuri).then(() => {
@@ -22,14 +21,10 @@ app.get("/", (req, res) => {
   //Hello World 데이터 반환
   res.send("Hello World")
 })
+app.get("/posts", (req, res) => {
+  //Hello World 데이터 반환
+  res.send("Hello posts")
+})
 
 
-
-
-
-
-// http listen port 생성 서버 실행
-app.listen(PORT, () => {
-  console.log(`서버가 http://localhost:${PORT} 포트에서 실행 중입니다.`);
-});
 module.exports = app
