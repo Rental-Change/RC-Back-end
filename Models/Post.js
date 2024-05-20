@@ -11,14 +11,24 @@ const postSchema = new mongoose.Schema({
         type: String, 
         required: true 
     },
+    postAmount: { 
+        type: String 
+    },
+    postPeriod: { 
+        type: String 
+    },
     postContent: { 
+        type: String 
+    },
+    postStatus: { 
         type: String 
     },
     postImage: { 
         data: Buffer,
+        fileName: String,
         contentType: String,
+        filePath: String,
     },
-    postStatus: String,
 
     postLike: Boolean,
 

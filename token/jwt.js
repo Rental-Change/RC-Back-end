@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken'); // jwt 모듈 불러오기
-const secretKey = process.env.JWT_SECRET_KEY;
+const secretKey = "asdfghj1233334";
 
 const generateToken = (payload) => {
   const token = jwt.sign(payload, secretKey, { expiresIn: '1h' });

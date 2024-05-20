@@ -14,5 +14,7 @@ router.post('/', upload.single('postImage'), postsController.createPost );
 router.post('/:userID', postsController.editPost);
 // 게시물 삭제
 router.post('/:userID', postsController.deletePost);
+// 게시물 상세 페이지 접근
+router.post('/:id', postsController.post_View);
 
 module.exports = router;

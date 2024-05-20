@@ -22,7 +22,7 @@ app.use('/signup', signupRouter);
 // 로그인
 app.use('/signin', loginRouter);
 // my_page 리스트
-app.use('/my_page', viewRouter);
+app.use('/', viewRouter);
 // 매장 등록
 app.use('/posts', postsRouter);
 

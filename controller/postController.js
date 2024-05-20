@@ -1,6 +1,8 @@
 //postControlloer.js
 const Post = require('../Models/Post')
-const upload = require('../utils/upload')
+const mongoose = require('mongoose');
+const DB = mongoose;
+
 
 // //목록 접근
 // exports.getPost = async(req, res, next) => {
@@ -15,32 +17,50 @@ const upload = require('../utils/upload')
 //         next(err);
 //     }  
 // };
+// 게시물 상세 페이지
+exports.post_View = async (req, res) => {
+    console.log(req.params.id)
+    req.params.id = new objId(req.params.id)
+try {
+    const postView = DB.collection('posts').findOne({ _id : req.params.id })
+
+    res.redirect('/',{ postView })
+    
+    //res.status(200).json(postView);
+
+    } catch (error) {
+        console.error('Error fetching posts:', error);
+        res.status(500).send('Internal Server Error');
+    }    
+}
 //작성
 exports.createPost = async(req, res,next) => {
-    upload.single('postImage') 
     try {
+        console.log("받은 파일 데이터: ", req.file )
         if (!req.file) {
             return res.status(400).json({ error: 'No file uploaded' });
         }
-
-        console.log("받은 파일 데이터: ", req.file)
-
-        const {userID, title, content} = req.body;
+        
+        const {userID, title, amount, period, content, status} = req.body;
         const postImage = {
             data: req.file.buffer,
+            fileName: req.file.filename,
             contentType: req.file.mimetype,
+            filePath: req.file.path,
           };
     
         const post = new Post({
             user : userID,
             postTitle : title,
-            postContent : content,
+            postAmount: amount,
+            postPeriod: period,
+            postContent: content,
+            postStatus: status,
             postImage : postImage,
         });
         
         console.log("받은 데이터: ", post)
         await post.save()
-        res.redirect('/posts');
 
     } catch(err) {
         next(err);
@@ -64,14 +84,22 @@ exports.getEdit = async (req, res, next) => {
 //수정
 exports.editPost = async(req, res, next) => {
     const { userID } = req.params;
-    const { title, content } = req.body;
-    const image = {
-        data: req.file,//.buffer,
-        contentType: req.file,//.mimetype,
+    const { title, amount, period,content, status } = req.body;
+    const postImage = {
+        data: req.file.buffer,
+        fileName: req.file.filename,
+        contentType: req.file.mimetype,
       };
     
     try {
-        const post = await Post.findOneAndUpdate({ user_ID : userID }, { postTitle : title, postContent : content, postImage : image});
+        const post = await Post.findOneAndUpdate({ user_ID : userID }, { 
+                postTitle : title, 
+                postContent : content, 
+                postAmount: amount , 
+                postPeriod: period,
+                postStatus: status,
+                postImage : postImage
+            });
         console.log(post)
         if (!post) {
             throw new Error('Post not found');
