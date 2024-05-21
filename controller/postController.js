@@ -1,86 +1,122 @@
-const express = require('express')
-const router = express.Router();
-const userID = require('../Models/User')
-const post = require('../Models/Post')
-const bcrypt = require("bcrypt")
-
-
-// 게시물 작성
-router.post('/', async (req, res, next) => {
-    const { title, content } = req.body;
-    try {
-        // 새로운 게시물 생성
-        const newPost = await post.create({
-            title,
-            image,
-            content,
-        });
-
-        // 생성된 게시물 정보를 클라이언트에 응답으로 보내기
-        res.status(201).json({ success: true, message: '게시물이 성공적으로 생성되었습니다.', post: newPost });
-    } catch (err) {
-        // 에러가 발생한 경우, 에러를 다음 미들웨어에 전달하여 처리
-        next(err);
-    }
-});
-
-module.exports = router;
+//postControlloer.js
+const Post = require('../Models/Post')
+const mongoose = require('mongoose');
+const DB = mongoose;
 
 
 // //목록 접근
-// router.get('/', async(req, res, next) => {
+// exports.getPost = async(req, res, next) => {
 //     if (req.query.write) {
-//         res.render('posts/edit');
+//         res.render('/posts/edit');
 //         return;
 //     }
 //     try {
-//         const posts = await post.find({});
-//         res.render('posts/list', { posts });
+//         const post = await Post.find({});
+//         res.render('/posts', { post });
 //     } catch (err) {
 //         next(err);
 //     }  
-// })
-// //작성
+// };
+// 게시물 상세 페이지
+exports.post_View = async (req, res) => {
+    console.log(req.params.id)
+    req.params.id = new objId(req.params.id)
+try {
+    const postView = DB.collection('posts').findOne({ _id : req.params.id })
 
-// router.get('/:userID', async (req, res, next) => {
-//     const { userID } = req.params;
-//     const post = await Post.findOne({ userID });
-//     if (!post) {
-//         next(new Error('Post NotFound'));
-//         return;
-//     }
-//     //수정페이지
-//     if (req.query.edit) {
-//         res.render('posts/edit', { post });
-//         return;
-//     }
-//     res.render('posts/view', { post });
-// }); 
-// //수정
-// router.post('/:userID', async(req, res, next) => {
-//     const {userID} = req.params;
-//     const {title, content} = req.body;
+    res.redirect('/',{ postView })
     
-//     try {
-//         const post = await Post.findOneAndUpdate({ userID }, { title, content });
-//         if (!post) {
-//             throw new Error('Post not found');
-//         }
-//         res.redirect(`/posts/:${userID}`);
-//     } catch (err) {
-//         next(err);
-//     }
-// });
-// //삭제
-// router.delete('/:userID', async (req, res, next) => {
-//     const {userID} = req.params;
-//     try {
-//         await Post.deleteOne({ userID });
-//         res.send('ok');
+    //res.status(200).json(postView);
 
-//     } catch (err){
-//         next(err);
-//     }
-// });
+    } catch (error) {
+        console.error('Error fetching posts:', error);
+        res.status(500).send('Internal Server Error');
+    }    
+}
+//작성
+exports.createPost = async(req, res,next) => {
+    try {
+        console.log("받은 파일 데이터: ", req.file )
+        if (!req.file) {
+            return res.status(400).json({ error: 'No file uploaded' });
+        }
+        
+        const {userID, title, amount, period, content, status} = req.body;
+        const postImage = {
+            data: req.file.buffer,
+            // fileName: req.file.filename,
+            contentType: req.file.mimetype,
+            // filePath: req.file.path,
+          };
+    
+        const post = new Post({
+            user : userID,
+            postTitle : title,
+            postAmount: amount,
+            postPeriod: period,
+            postContent: content,
+            postStatus: status,
+            postImage : postImage,
+        });
+        
+        console.log("받은 데이터: ", post)
+        await post.save()
 
-module.exports = router;
+    } catch(err) {
+        next(err);
+    }
+};
+exports.getEdit = async (req, res, next) => {
+    const { userID } = req.params;
+    const post = await Post.findOne({ user_ID : userID });
+    console.log(post)
+    if (!post) {
+        next(new Error('Post NotFound'));
+        return;
+    }
+    //수정페이지
+    if (req.query.edit) {
+        res.render('/posts/edit', { post });
+        return;
+    }
+    res.render('/posts', { post });
+}; 
+//수정
+exports.editPost = async(req, res, next) => {
+    const { userID } = req.params;
+    const { title, amount, period,content, status } = req.body;
+    const postImage = {
+        data: req.file.buffer,
+        fileName: req.file.filename,
+        contentType: req.file.mimetype,
+      };
+    
+    try {
+        const post = await Post.findOneAndUpdate({ user_ID : userID }, { 
+                postTitle : title, 
+                postContent : content, 
+                postAmount: amount , 
+                postPeriod: period,
+                postStatus: status,
+                postImage : postImage
+            });
+        console.log(post)
+        if (!post) {
+            throw new Error('Post not found');
+        }
+        res.redirect(`/posts/${userID}`);
+    } catch (err) {
+        next(err);
+    }
+};
+//삭제
+exports.deletePost = async (req, res, next) => {
+    const {userID} = req.params;
+    try {
+        await Post.deleteOne({ user_ID : userID });
+        res.send('OK');
+
+    } catch (err){
+        next(err);
+    }
+};
