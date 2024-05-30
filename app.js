@@ -8,7 +8,8 @@ const bodyParser = require('body-parser');
 
 app.use(express.json())
 app.use(cors())
-app.use(bodyParser.json());
+app.use(bodyParser.json());  // For parsing application/json
+app.use(bodyParser.urlencoded({ extended: true }));
 
 const DBuri = "mongodb+srv://lgh0385hh:PEjPdAIA2iRoeDRJ@cluster0.r68uyyf.mongodb.net/Cluster0?retryWrites=true&w=majority&appName=Cluster0";
 

@@ -1,15 +1,16 @@
 //listViewController.js
-
+const Like = require('../Models/Like');
 const Post = require('../Models/Post')
+const User = require('../Models/User');
 const mongoose = require('mongoose');
 const DB = mongoose;
 //전체 게시물 보여주기
 exports.all_List = async (req, res) => {
     try {
-    const allList = DB.collection('posts').find()
+    // const allList = DB.collection('posts').find()
     // res.redirect('/', { allList });
     
-    // const allList = await Post.find();
+    const allList = await Post.find();
     res.status(200).json(allList);
 
     } catch (error) {
@@ -19,13 +20,23 @@ exports.all_List = async (req, res) => {
 }
 // 사용자가 쓴 게시물 보여주기
 exports.my_List = async (req, res) => {
-    const userId = req.User.user_ID
 try {
-    const myList = DB.collection('posts').find({ user_ID : userId })
+    //const myList = DB.collection('posts').find({ user_ID : userID })
+    //res.redirect('/',{ myList })
+    const { userID } = req.params;
+    console.log(userID);
 
-    res.redirect('/',{ myList })
+    if (!userID) {
+        throw new Error('요청에서 userID를 찾을 수 없습니다.');
+      }
 
-    //res.status(200).json(myList);
+    const objID = await User.findOne( { user_ID : userID })
+    if (!objID) {
+        throw new Error('해당하는 유저를 찾을 수 없습니다.');
+      }
+  
+    const myList = await Post.find({ user : objID._id });
+    res.status(200).json(myList);
 
     } catch (error) {
         console.error('Error fetching posts:', error);
@@ -34,14 +45,21 @@ try {
 }
 // 좋아요 누른 게시물 보여주기
 exports.like_List = async (req, res) => {
-    const userId = req.parmas.userID;
 try {
-    const likeList = DB.collection('posts').find({ user_ID : userId, postLike: true })
+    const { userID } = req.params;
+    console.log(userID);
 
-    res.redirect('/',{ likeList })
-    
-    //res.status(200).json(likeList);
+    if (!userID) {
+        throw new Error('요청에서 userID를 찾을 수 없습니다.');
+      }
 
+    const userObjID = await User.findOne( { user_ID : userID })
+    if (!userObjID) {
+        throw new Error('해당하는 유저를 찾을 수 없습니다.');
+      }
+
+    const likeList = await Like.find({ user : userObjID._id , postLike : true });
+    res.status(200).json(likeList);
 
     } catch (error) {
         console.error('Error fetching posts:', error);

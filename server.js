@@ -7,6 +7,7 @@ const loginRouter = require("./routers/loginRouter")
 const signupRouter = require("./routers/signupRouter")
 const postsRouter = require('./routers/postsRouter')
 const viewRouter = require('./routers/listViewRouter')
+const likeRouter = require('./routers/likeRouter')
 const httpServer = createServer(app);
 
 
@@ -25,6 +26,8 @@ app.use('/signin', loginRouter);
 app.use('/', viewRouter);
 // 매장 등록
 app.use('/posts', postsRouter);
+
+app.use('/likepost', likeRouter )
 
 
 require("./utils/io")(io); //io.js에 io매개변수를 보냄

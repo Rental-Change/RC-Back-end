@@ -23,17 +23,17 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-const storage = multer.diskStorage({
+const storage = multer.memoryStorage({
     //폴더위치 지정
-    destination: (req, file, done) => {
-      done(null, path.join(__dirname, "../images"));
-    },
-    filename: (req, file, done) => {
-      const ext = path.extname(file.originalname);
-      // aaa.txt => aaa+&&+129371271654.txt
-      const fileName = path.basename(file.originalname, ext) + Date.now() + ext;
-      done(null, fileName);
-    },
+    // destination: (req, file, done) => {
+    //   done(null, path.join(__dirname, "../images"));
+    // },
+    // filename: (req, file, done) => {
+    //   const ext = path.extname(file.originalname);
+    //   // aaa.txt => aaa+&&+129371271654.txt
+    //   const fileName = path.basename(file.originalname, ext) + Date.now() + ext;
+    //   done(null, fileName);
+    // },
 });
 const upload = multer({
   storage: storage,

@@ -61,8 +61,8 @@ exports.loginUser = async (req, res) => {
     // jwt.js에서 작성된 토큰 생성 코드 실행
     const token = generateToken(payload);
     // userID & JWT 전송
-    res.json({ message: '성공적으로 로그인 되었습니다.', userID: id, token });
-    return res.cookie('token', token, { httpOnly: true, maxAge: 3600000 });
+    res.cookie('token', token, { httpOnly: true, maxAge: 3600000 });
+    return res.json({ success: true, message: '성공적으로 로그인 되었습니다.', userID: id, token });
     
 
   } catch (error) {
