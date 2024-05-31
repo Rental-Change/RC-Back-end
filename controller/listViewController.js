@@ -1,5 +1,5 @@
 //listViewController.js
-const Like = require('../Models/Like');
+const Like = require('../Models/BookMark');
 const Post = require('../Models/Post')
 const User = require('../Models/User');
 const mongoose = require('mongoose');

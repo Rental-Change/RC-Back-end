@@ -1,7 +1,7 @@
 //postControlloer.js
 const Post = require('../Models/Post')
 const User = require('../Models/User')
-const Like = require('../Models/Like')
+const Like = require('../Models/BookMark')
 const mongoose = require('mongoose');
 const { Types: { ObjectId } } = mongoose;
 const DB = mongoose;

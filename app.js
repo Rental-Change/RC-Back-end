@@ -5,6 +5,11 @@ require('dotenv').config()
 const cors = require("cors")
 const app = express()
 const bodyParser = require('body-parser');
+const loginRouter = require("./routers/loginRouter")
+const signupRouter = require("./routers/signupRouter")
+const postsRouter = require('./routers/postsRouter')
+const viewRouter = require('./routers/listViewRouter')
+const booMarkRouter = require('./routers/bookMarklRouter')
 
 app.use(express.json())
 app.use(cors())
@@ -18,6 +23,16 @@ mongoose.connect(DBuri).then(() => {
 }).catch((err) => {
   console.error('Error connecting to MongoDB:', err);
 });
+
+app.use('/signup', signupRouter);
+// 로그인
+app.use('/signin', loginRouter);
+// my_page 리스트
+app.use('/', viewRouter);
+// 매장 등록
+app.use('/posts', postsRouter);
+
+app.use('/likepost', booMarkRouter )
 
 
 module.exports = app
