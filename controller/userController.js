@@ -1,10 +1,20 @@
 const User = require('../Models/User');
 const bcrypt = require("bcrypt");
+<<<<<<< HEAD
 const jwt = require('jsonwebtoken'); // jwt 토큰 사용을 위해 모듈 불러오기
 const { generateToken } = require('../token/jwt');
 
 
 exports.createUser = async (req, res) => {
+=======
+const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
+// JWT 생성을 위한 비밀키 생성
+const secretKey = crypto.randomBytes(32).toString('hex');
+
+exports.createUser = async (req, res) => {
+  
+>>>>>>> 768ced843bdc2d8e095a03a448cee0f9c62c51e9
   const userData = req.body;
   console.log('받은 데이터:', userData);
 
@@ -39,17 +49,27 @@ exports.loginUser = async (req, res) => {
     const userData = req.body;
 
     const { id, password } = userData;
+<<<<<<< HEAD
     
     const user = await User.findOne({ user_ID: id });
     
     // 회원 정보 유효성 검사
     if (!user) {
       return res.status(401).json({ success: false, message: '사용자가 존재하지 않습니다.' });
+=======
+
+    const user = await User.findOne({ user_ID: id });
+
+    // 회원 정보 유효성 검사
+    if (!user) {
+      return res.status(404).json({ success: false, message: '사용자가 존재하지 않습니다.' });
+>>>>>>> 768ced843bdc2d8e095a03a448cee0f9c62c51e9
     }
 
     // 비밀번호 유효성 검사
     const isPasswordValid = await bcrypt.compare(password, user.user_PW);
     if (!isPasswordValid) {
+<<<<<<< HEAD
       return res.status(402).json({ success: false, message: '비밀번호가 올바르지 않습니다.' });
     }
     
@@ -76,3 +96,18 @@ exports.checkUser = async(sid)=>{
   if(!user) throw new Error("user not found")
   return user;
 }
+=======
+      return res.status(401).json({ success: false, message: '비밀번호가 올바르지 않습니다.' });
+    }
+
+    // JWT 생성
+    const token = jwt.sign({userId: user._id}, secretKey, { expiresIn: '1h'});
+
+    // userID & JWT 전송
+    res.status(200).json({userID: id, token });
+
+  } catch (error) {
+    res.status(500).json({ success: false, message: '로그인 중 에러가 발생했습니다.' });
+  }
+};
+>>>>>>> 768ced843bdc2d8e095a03a448cee0f9c62c51e9
