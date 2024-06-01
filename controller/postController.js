@@ -1,8 +1,10 @@
 //postControlloer.js
 const Post = require('../Models/Post')
+const User = require('../Models/User')
+const Like = require('../Models/Like')
 const mongoose = require('mongoose');
+const { Types: { ObjectId } } = mongoose;
 const DB = mongoose;
-
 
 // //목록 접근
 // exports.getPost = async(req, res, next) => {
@@ -36,33 +38,38 @@ try {
 //작성
 exports.createPost = async(req, res,next) => {
     try {
-        console.log("받은 파일 데이터: ", req.file )
+        console.log("Received body data: ", req.body);  // Debugging line to log the request body
+        console.log("Received file data: ", req.file);  // Debugging line to log the file data
+
         if (!req.file) {
             return res.status(400).json({ error: 'No file uploaded' });
         }
         
-        const {userID, title, amount, period, content, status} = req.body;
+        const {userID, title, amount, period, content, status} = req.body
+    
+        const objID = await User.findOne( { user_ID : userID })
+
         const postImage = {
             data: req.file.buffer,
-            // fileName: req.file.filename,
             contentType: req.file.mimetype,
-            // filePath: req.file.path,
-          };
-    
+        };
+        
         const post = new Post({
-            user : userID,
-            postTitle : title,
+            user: objID._id,
+            postTitle: title,
             postAmount: amount,
             postPeriod: period,
             postContent: content,
             postStatus: status,
-            postImage : postImage,
+            postImage: postImage,
         });
         
         console.log("받은 데이터: ", post)
         await post.save()
+        res.status(201).json({ message: 'Post created successfully' });
 
     } catch(err) {
+        console.error("Error while creating post: ", err);
         next(err);
     }
 };

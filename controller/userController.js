@@ -1,10 +1,10 @@
 const User = require('../Models/User');
 const bcrypt = require("bcrypt");
-const jwt = require('jsonwebtoken'); // jwt 토큰 사용을 위해 모듈 불러오기
+// const jwt = require('jsonwebtoken'); // jwt 토큰 사용을 위해 모듈 불러오기
 const { generateToken } = require('../token/jwt');
 
+
 exports.createUser = async (req, res) => {
-  
   const userData = req.body;
   console.log('받은 데이터:', userData);
 
@@ -33,39 +33,42 @@ exports.createUser = async (req, res) => {
     res.status(500).json({ error: '데이터를 저장하는 데 문제가 발생했습니다.' });
   }
 };
-//로그인
+
 exports.loginUser = async (req, res) => {
   try {
     const userData = req.body;
-    console.log(userData)
     const { id, password } = userData;
     const user = await User.findOne({ user_ID: id });
-    // 회원 정보 유효성 검사
+
     if (!user) {
       return res.status(404).json({ success: false, message: '사용자가 존재하지 않습니다.' });
     }
-    console.log(user)
 
-    // 비밀번호 유효성 검사
     const isPasswordValid = await bcrypt.compare(password, user.user_PW);
     if (!isPasswordValid) {
       return res.status(401).json({ success: false, message: '비밀번호가 올바르지 않습니다.' });
     }
 
-    console.log(user)
-
-    // 유저 id, 관리자 여부 객체로 토큰 페이로드 정보 생성
-    const payload = {
+    // 액세스 토큰 생성
+    const accessTokenPayload = {
       userId: user.userId,
       isAdmin: user.isAdmin,
-      };
-    // jwt.js에서 작성된 토큰 생성 코드 실행
-    const token = generateToken(payload);
-    // userID & JWT 전송
-    res.json({ message: '성공적으로 로그인 되었습니다.', userID: id, token });
-    return res.cookie('token', token, { httpOnly: true, maxAge: 3600000 });
+    };
+    const accessToken = generateToken(accessTokenPayload, '1h'); // 1시간 유효한 액세스 토큰 생성
+
+    // 리프레시 토큰 생성 및 쿠키에 저장
+    const refreshTokenPayload = {
+      userId: user.userId,
+    };
+    const refreshToken = generateToken(refreshTokenPayload, '7d'); // 7일 유효한 리프레시 토큰 생성
+    
+    return res
+      .status(200)
+      .cookie('refreshToken', refreshToken, { httpOnly: true, maxAge: 604800000 }) // 7일(604800000 밀리초)
+      .json({ message: '성공적으로 로그인 되었습니다.', userID: id, accessToken });
 
   } catch (error) {
+    console.error('Error during login:', error);
     res.status(500).json({ success: false, message: '로그인 중 에러가 발생했습니다.' });
   }
 };
