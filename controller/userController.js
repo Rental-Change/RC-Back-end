@@ -1,12 +1,10 @@
 const User = require('../Models/User');
 const bcrypt = require("bcrypt");
-const jwt = require('jsonwebtoken');
-const crypto = require('crypto');
-// JWT 생성을 위한 비밀키 생성
-const secretKey = crypto.randomBytes(32).toString('hex');
+// const jwt = require('jsonwebtoken'); // jwt 토큰 사용을 위해 모듈 불러오기
+const { generateToken } = require('../token/jwt');
+
 
 exports.createUser = async (req, res) => {
-  
   const userData = req.body;
   console.log('받은 데이터:', userData);
 
@@ -35,33 +33,48 @@ exports.createUser = async (req, res) => {
     res.status(500).json({ error: '데이터를 저장하는 데 문제가 발생했습니다.' });
   }
 };
-//로그인
+
 exports.loginUser = async (req, res) => {
   try {
     const userData = req.body;
-
     const { id, password } = userData;
-
     const user = await User.findOne({ user_ID: id });
 
-    // 회원 정보 유효성 검사
     if (!user) {
       return res.status(404).json({ success: false, message: '사용자가 존재하지 않습니다.' });
     }
 
-    // 비밀번호 유효성 검사
     const isPasswordValid = await bcrypt.compare(password, user.user_PW);
     if (!isPasswordValid) {
       return res.status(401).json({ success: false, message: '비밀번호가 올바르지 않습니다.' });
     }
 
-    // JWT 생성
-    const token = jwt.sign({userId: user._id}, secretKey, { expiresIn: '1h'});
+    // 액세스 토큰 생성
+    const accessTokenPayload = {
+      userId: user.userId,
+      isAdmin: user.isAdmin,
+    };
+    const accessToken = generateToken(accessTokenPayload, '1h'); // 1시간 유효한 액세스 토큰 생성
 
-    // userID & JWT 전송
-    res.status(200).json({userID: id, token });
+    // 리프레시 토큰 생성 및 쿠키에 저장
+    const refreshTokenPayload = {
+      userId: user.userId,
+    };
+    const refreshToken = generateToken(refreshTokenPayload, '7d'); // 7일 유효한 리프레시 토큰 생성
+    
+    return res
+      .status(200)
+      .cookie('refreshToken', refreshToken, { httpOnly: true, maxAge: 604800000 }) // 7일(604800000 밀리초)
+      .json({ message: '성공적으로 로그인 되었습니다.', userID: id, accessToken });
 
   } catch (error) {
+    console.error('Error during login:', error);
     res.status(500).json({ success: false, message: '로그인 중 에러가 발생했습니다.' });
   }
 };
+
+exports.checkUser = async(sid)=>{
+  const user = await User.findOne({token:sid})
+  if(!user) throw new Error("user not found")
+  return user;
+}
