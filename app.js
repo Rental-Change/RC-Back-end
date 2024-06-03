@@ -9,7 +9,7 @@ const loginRouter = require("./routers/loginRouter")
 const signupRouter = require("./routers/signupRouter")
 const postsRouter = require('./routers/postsRouter')
 const viewRouter = require('./routers/listViewRouter')
-const booMarkRouter = require('./routers/bookMarklRouter')
+const bookMarkRouter = require('./routers/bookMarkRouter')
 
 app.use(express.json())
 app.use(cors())
@@ -32,7 +32,7 @@ app.use('/', viewRouter);
 // 매장 등록
 app.use('/posts', postsRouter);
 
-app.use('/likepost', booMarkRouter )
+app.use('/posts', bookMarkRouter )
 
 
 module.exports = app
