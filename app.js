@@ -24,6 +24,7 @@ mongoose.connect(DBuri).then(() => {
   console.error('Error connecting to MongoDB:', err);
 });
 
+// 회원가입
 app.use('/signup', signupRouter);
 // 로그인
 app.use('/signin', loginRouter);
@@ -31,8 +32,9 @@ app.use('/signin', loginRouter);
 app.use('/', viewRouter);
 // 매장 등록
 app.use('/posts', postsRouter);
+// 북마크
+app.use('/', bookMarkRouter )
 
-app.use('/posts', bookMarkRouter )
 
 
 module.exports = app

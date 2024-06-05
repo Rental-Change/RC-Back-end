@@ -6,15 +6,12 @@ require("dotenv").config();
 
 const httpServer = createServer(app);
 
-
-
 const PORT = process.env.PORT || 5001;
 const io = new Server(httpServer,{
     cors:{
         origin: "http://localhost:5173",
     },
 });
-// 회원가입
 
 require("./utils/io")(io); //io.js에 io매개변수를 보냄
 

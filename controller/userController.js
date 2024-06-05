@@ -39,9 +39,9 @@ exports.loginUser = async (req, res) => {
     const userData = req.body;
 
     const { id, password } = userData;
-    
+
     const user = await User.findOne({ user_ID: id });
-    
+
     // 회원 정보 유효성 검사
     if (!user) {
       return res.status(401).json({ success: false, message: '사용자가 존재하지 않습니다.' });
@@ -52,7 +52,7 @@ exports.loginUser = async (req, res) => {
     if (!isPasswordValid) {
       return res.status(402).json({ success: false, message: '비밀번호가 올바르지 않습니다.' });
     }
-    
+
     // 유저 id, 관리자 여부 객체로 토큰 페이로드 정보 생성
     const payload = {
       userId: user.userId,

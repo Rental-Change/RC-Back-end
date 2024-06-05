@@ -2,19 +2,15 @@ const mongoose = require('mongoose');
 
 // 유저 정보를 담을 스키마 정의
 const userSchema = new mongoose.Schema({
-  user_Name: {
-    type: String,
-    required: true,
-  },
+  user_Name: String,
   user_ID: {
     type: String,
     required: true,
-    unique: 1
+    unique: true
   },
   user_PW: {
     type: String,
-    required: true,
-    minlength: 8
+    required: true
   },
   token: {
     type: String,
@@ -22,6 +18,7 @@ const userSchema = new mongoose.Schema({
  
 });
 
+// 모델 생성
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;

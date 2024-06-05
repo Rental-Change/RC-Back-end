@@ -9,7 +9,7 @@ exports.addBookMark = async (req, res, next) => {
 
         // Find user and post by ID
         const user = await User.findOne({ user_ID: userID });
-        const post = await Post.findById(postID);
+        const post = await Post.findById( postID );
 
         if (!user || !post) {
             return res.status(404).json({ msg: 'User or Post not found' });
@@ -40,16 +40,16 @@ exports.deleteBookMark = async (req, res, next) => {
     const { userID, postID } = req.body;
     try {
         const user = await User.findOne({ user_ID: userID });
-        const post = await Post.findById(postID);
+        const post = await Post.findById( postID );
 
         if (!user || !post) {
             return res.status(404).json({ msg: 'User or Post not found' });
         }
 
         // Remove the bookmark
-        const result = await BookMark.deleteOne({ user: user._id, post: post._id });
+        const deleteresult = await BookMark.deleteOne({ user: user._id, post: post._id });
 
-        if (result.deletedCount === 0) {
+        if (deleteresult.deletedCount === 0) {
             return res.status(404).json({ msg: 'Bookmark not found' });
         }
 
