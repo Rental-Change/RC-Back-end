@@ -6,14 +6,14 @@ const cors = require("cors")
 const app = express()
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
-const { refreshJwtMiddleware }  = require('./token/refreshJwtMiddleware')
 
 app.use(express.json())
-app.use(cors())
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true
+}))
 app.use(cookieParser())
 
-// refresh 토큰 미들웨어
-app.use(refreshJwtMiddleware);
 app.use(bodyParser.json());  // For parsing application/json
 app.use(bodyParser.urlencoded({ extended: true }));
 

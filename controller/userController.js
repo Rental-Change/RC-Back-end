@@ -1,7 +1,7 @@
 const User = require('../Models/User');
 const bcrypt = require("bcrypt");
-// const jwt = require('jsonwebtoken'); // jwt 토큰 사용을 위해 모듈 불러오기
-const { generateToken } = require('../token/jwt');
+const jwt = require('jsonwebtoken'); // jwt 토큰 사용을 위해 모듈 불러오기
+const { generateAccessToken, generateRefreshToken } = require('../token/jwt');
 
 
 exports.createUser = async (req, res) => {
@@ -34,47 +34,57 @@ exports.createUser = async (req, res) => {
   }
 };
 
+//로그인
 exports.loginUser = async (req, res) => {
   try {
     const userData = req.body;
-    const { id, password } = userData;
-    const user = await User.findOne({ user_ID: id });
 
+    const { id, password } = userData;
+    
+    const user = await User.findOne({ user_ID: id });
+    
+    // 회원 정보 유효성 검사
     if (!user) {
-      return res.status(404).json({ success: false, message: '사용자가 존재하지 않습니다.' });
+      return res.status(401).json({ success: false, message: '사용자가 존재하지 않습니다.' });
     }
 
+    // 비밀번호 유효성 검사
     const isPasswordValid = await bcrypt.compare(password, user.user_PW);
     if (!isPasswordValid) {
-      return res.status(401).json({ success: false, message: '비밀번호가 올바르지 않습니다.' });
+      return res.status(402).json({ success: false, message: '비밀번호가 올바르지 않습니다.' });
     }
+    
+    // 사용자 정보에서 필요한 페이로드 추출
+    const payload = {
+      userId: user.id,
+    };
 
     // 액세스 토큰 생성
-    const accessTokenPayload = {
-      userId: user.userId,
-      isAdmin: user.isAdmin,
-    };
-    const accessToken = generateToken(accessTokenPayload, '1h'); // 1시간 유효한 액세스 토큰 생성
+    const accessToken = generateAccessToken(payload);
 
-    // 리프레시 토큰 생성 및 쿠키에 저장
-    const refreshTokenPayload = {
-      userId: user.userId,
-    };
-    const refreshToken = generateToken(refreshTokenPayload, '7d'); // 7일 유효한 리프레시 토큰 생성
-    
-    return res
-      .status(200)
-      .cookie('refreshToken', refreshToken, { httpOnly: true, maxAge: 604800000 }) // 7일(604800000 밀리초)
-      .json({ message: '성공적으로 로그인 되었습니다.', userID: id, accessToken });
+    // 리프레시 토큰 생성
+    const refreshToken = generateRefreshToken(payload);
 
-  } catch (error) {
-    console.error('Error during login:', error);
-    res.status(500).json({ success: false, message: '로그인 중 에러가 발생했습니다.' });
-  }
+    // 생성된 토큰들을 클라이언트에 응답으로 보냅니다.
+    res.cookie('refreshToken', refreshToken, {
+            expires: new Date(Date.now() + 3600000),
+            httpOnly: true,
+        })
+        .header('Authorization', accessToken)
+        .json({ message: '로그인 성공', userID: id, accessToken: accessToken});
+
+    } catch (error) {
+    console.error('Login error:', error);
+    return res.status(500).json({ success: false, message: '로그인 중 오류가 발생했습니다.' });
+    }
 };
 
-exports.checkUser = async(sid)=>{
-  const user = await User.findOne({token:sid})
-  if(!user) throw new Error("user not found")
-  return user;
+exports.logoutUser = async (req, res) => {
+  // refresh 토큰이 저장된 쿠키를 삭제합니다.
+  res.clearCookie('refreshToken', {
+    path: '/', // 쿠키의 경로를 루트('/')로 설정
+    domain: '.localhost' // 쿠키의 도메인을 설정
+  });
+  // 그 외의 로그아웃 관련 작업을 수행할 수 있습니다.
+  res.send('로그아웃 되었습니다.');
 }

@@ -1,15 +1,18 @@
+const jwt = require('jsonwebtoken'); // jwt 모듈 불러오기
+
 const refreshJwtMiddleware = (req, res, next) => {
-  const jwt = require('./jwt'); // jwt.js 파일을 불러옵니다.
-  const token = req.cookies.refreshToken; // 쿠키에서 refreshToken 가져오기
+  const token = req.cookies.refreshToken;
 
-  if (token) {
-    const newToken = jwt.refreshToken(token);
-    if (newToken) {
-      res.cookie('refreshToken', newToken, { httpOnly: true, maxAge: 604800000 }); // 새 토큰으로 쿠키 업데이트
-    }
-  }
+  if (!token) return res.sendStatus(401);
 
-  next();
-};
+  jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
+    if (err) return res.sendStatus(403);
 
-module.exports = { refreshJwtMiddleware };
+    const accessToken = generateAccessToken({ name: user.name });
+    res.json({ accessToken: accessToken });
+  });
+
+}
+
+// 미들웨어 함수 내보내기
+module.exports = refreshJwtMiddleware;
