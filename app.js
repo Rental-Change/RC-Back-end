@@ -13,6 +13,16 @@ const bookMarkRouter = require('./routers/bookMarkRouter')
 
 app.use(express.json())
 app.use(cors())
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+
+app.use(express.json())
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true
+}))
+app.use(cookieParser())
+
 app.use(bodyParser.json());  // For parsing application/json
 app.use(bodyParser.urlencoded({ extended: true }));
 
