@@ -33,7 +33,6 @@ exports.createUser = async (req, res) => {
     res.status(500).json({ error: '데이터를 저장하는 데 문제가 발생했습니다.' });
   }
 };
-
 //로그인
 exports.loginUser = async (req, res) => {
   try {

@@ -4,6 +4,15 @@ const mongoose = require("mongoose")
 require('dotenv').config()
 const cors = require("cors")
 const app = express()
+const bodyParser = require('body-parser');
+const loginRouter = require("./routers/loginRouter")
+const signupRouter = require("./routers/signupRouter")
+const postsRouter = require('./routers/postsRouter')
+const viewRouter = require('./routers/listViewRouter')
+const bookMarkRouter = require('./routers/bookMarkRouter')
+
+app.use(express.json())
+app.use(cors())
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 
@@ -25,10 +34,17 @@ mongoose.connect(DBuri).then(() => {
   console.error('Error connecting to MongoDB:', err);
 });
 
+// 회원가입
+app.use('/signup', signupRouter);
+// 로그인
+app.use('/signin', loginRouter);
+// my_page 리스트
+app.use('/', viewRouter);
+// 매장 등록
+app.use('/posts', postsRouter);
+// 북마크
+app.use('/', bookMarkRouter )
 
-// app.get("/posts", (req, res) => {
-//   //Hello World 데이터 반환
-// })
 
 
 module.exports = app
