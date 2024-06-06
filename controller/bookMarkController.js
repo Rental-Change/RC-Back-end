@@ -6,7 +6,8 @@ const mongoose = require('mongoose');
 exports.addBookMark = async (req, res, next) => {
     try {
         const { userID, postID } = req.body;
-
+        console.log(userID)
+        console.log(postID)
         // Find user and post by ID
         const user = await User.findOne({ user_ID: userID });
         const post = await Post.findById( postID );
@@ -16,8 +17,8 @@ exports.addBookMark = async (req, res, next) => {
         }
 
         // Check if the bookmark already exists
-        const existingLike = await Like.findOne({ user: user._id, post: post._id });
-        if (existingLike) {
+        const existingBookMark = await BookMark.findOne({ user: user._id, post: post._id });
+        if (existingBookMark) {
             return res.status(400).json({ msg: 'Bookmark already exists' });
         }
 

@@ -31,7 +31,7 @@ mongoose.connect(DBuri).then(() => {
 app.use('/signup', signupRouter);
 app.use('/signin', loginRouter);
 app.use('/', viewRouter);
-app.use('/posts', postsRouter);
+app.use('/', postsRouter);
 app.use('/', bookMarkRouter );
 
 module.exports = app;
