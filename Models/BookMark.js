@@ -1,3 +1,4 @@
+//BookMark.js
 const mongoose = require('mongoose');
 
 const BookMarkschema = new mongoose.Schema({
@@ -11,9 +12,10 @@ const BookMarkschema = new mongoose.Schema({
             ref: 'Post',
             required: true
         },
-    
+    status: Boolean,
+   
   });
 
-const BookMark = mongoose.model('Like', BookMarkschema);
+const BookMark = mongoose.model('BookMark', BookMarkschema);
 
 module.exports = BookMark;

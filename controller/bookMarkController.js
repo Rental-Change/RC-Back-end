@@ -1,3 +1,4 @@
+//bookMarkController.js
 const Post = require('../Models/Post');
 const User = require('../Models/User');
 const BookMark = require('../Models/BookMark');
@@ -10,13 +11,15 @@ exports.addBookMark = async (req, res, next) => {
         // Find user and post by ID
         const user = await User.findOne({ user_ID: userID });
         const post = await Post.findById( postID );
+        console.log(user);
+        console.log(post);
 
         if (!user || !post) {
             return res.status(404).json({ msg: 'User or Post not found' });
         }
 
         // Check if the bookmark already exists
-        const existingLike = await Like.findOne({ user: user._id, post: post._id });
+        const existingLike = await BookMark.findOne({ user: user._id, post: post._id });
         if (existingLike) {
             return res.status(400).json({ msg: 'Bookmark already exists' });
         }
@@ -25,10 +28,11 @@ exports.addBookMark = async (req, res, next) => {
         const bookmark = new BookMark({
             user: user._id,
             post: post._id,
-            postLike: true,
+            status: true,
         });
-
+       
         await bookmark.save();
+        console.log(bookmark);
         res.status(201).json({ msg: 'Bookmark added successfully' });
 
     } catch (err) {

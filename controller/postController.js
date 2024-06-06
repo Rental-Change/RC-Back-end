@@ -28,6 +28,7 @@ exports.createPost = async(req, res,next) => {
         
         const post = new Post({
             user: objID._id,
+            userID: userID,
             postTitle: title,
             postAmount: amount,
             postPeriod: period,
@@ -49,8 +50,10 @@ exports.createPost = async(req, res,next) => {
 // 게시물 상세 페이지
 exports.post_View = async (req, res) => {
 try {
+    const { userID } = req.params;
     const { postID } = req.params;
     console.log( postID )
+    console.log( userID )
     // const postView = DB.collection('posts').findOne({ _id : req.params.id })
     // res.redirect('/',{ postView })
     const postView = await Post.findOne( { _id : postID });
@@ -65,7 +68,7 @@ try {
 // exports.getEdit = async (req, res, next) => {
 //     const { userID } = req.params;
 //     const { postID } = req.body;
-
+    
 //     const post = await Post.findOne({ user_ID : userID, _id : postID });
 //     console.log(post)
 

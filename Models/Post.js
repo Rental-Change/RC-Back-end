@@ -7,6 +7,10 @@ const postSchema = new mongoose.Schema({
             ref: 'User',
             required: true 
         },
+    userID: { 
+        type: String, 
+        required: true 
+    },
     postTitle: { 
         type: String, 
         required: true 
