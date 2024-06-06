@@ -18,5 +18,3 @@ require("./utils/io")(io); //io.js에 io매개변수를 보냄
 httpServer.listen(PORT,() => {
     console.log("server listening on port", PORT);
 });
-
-

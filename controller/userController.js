@@ -1,7 +1,7 @@
 const User = require('../Models/User');
 const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken'); // jwt 토큰 사용을 위해 모듈 불러오기
-const { generateToken } = require('../token/jwt');
+const { generateAccessToken, generateRefreshToken } = require('../token/jwt');
 
 
 exports.createUser = async (req, res) => {
@@ -33,15 +33,16 @@ exports.createUser = async (req, res) => {
     res.status(500).json({ error: '데이터를 저장하는 데 문제가 발생했습니다.' });
   }
 };
+
 //로그인
 exports.loginUser = async (req, res) => {
   try {
     const userData = req.body;
 
     const { id, password } = userData;
-
+    
     const user = await User.findOne({ user_ID: id });
-
+    
     // 회원 정보 유효성 검사
     if (!user) {
       return res.status(401).json({ success: false, message: '사용자가 존재하지 않습니다.' });
@@ -52,27 +53,38 @@ exports.loginUser = async (req, res) => {
     if (!isPasswordValid) {
       return res.status(402).json({ success: false, message: '비밀번호가 올바르지 않습니다.' });
     }
-
-    // 유저 id, 관리자 여부 객체로 토큰 페이로드 정보 생성
-    const payload = {
-      userId: user.userId,
-      isAdmin: user.isAdmin,
-      };
-    // jwt.js에서 작성된 토큰 생성 코드 실행
-    const token = generateToken(payload);
-    // userID & JWT 전송
-    res.cookie('token', token, { httpOnly: true, maxAge: 3600000 });
-    return res.json({ success: true, message: '성공적으로 로그인 되었습니다.', userID: id, token });
     
+    // 사용자 정보에서 필요한 페이로드 추출
+    const payload = {
+      userId: user.id,
+    };
 
-  } catch (error) {
-    console.error('Error during login:', error);
-    res.status(500).json({ success: false, message: '로그인 중 에러가 발생했습니다.' });
-  }
+    // 액세스 토큰 생성
+    const accessToken = generateAccessToken(payload);
+
+    // 리프레시 토큰 생성
+    const refreshToken = generateRefreshToken(payload);
+
+    // 생성된 토큰들을 클라이언트에 응답으로 보냅니다.
+    res.cookie('refreshToken', refreshToken, {
+            expires: new Date(Date.now() + 3600000),
+            httpOnly: true,
+        })
+        .header('Authorization', accessToken)
+        .json({ message: '로그인 성공', userID: id, accessToken: accessToken});
+
+    } catch (error) {
+    console.error('Login error:', error);
+    return res.status(500).json({ success: false, message: '로그인 중 오류가 발생했습니다.' });
+    }
 };
 
-exports.checkUser = async(sid)=>{
-  const user = await User.findOne({token:sid})
-  if(!user) throw new Error("user not found")
-  return user;
+exports.logoutUser = async (req, res) => {
+  // refresh 토큰이 저장된 쿠키를 삭제합니다.
+  res.clearCookie('refreshToken', {
+    path: '/', // 쿠키의 경로를 루트('/')로 설정
+    domain: '.localhost' // 쿠키의 도메인을 설정
+  });
+  // 그 외의 로그아웃 관련 작업을 수행할 수 있습니다.
+  res.send('로그아웃 되었습니다.');
 }
