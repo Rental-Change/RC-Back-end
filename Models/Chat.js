@@ -1,21 +1,24 @@
 const mongoose = require('mongoose');
-const { Schema } = mongoose;
 
 // 채팅 정보를 담을 스키마 정의
 const chatSchema = new mongoose.Schema({
   chat: String,
   user: {
-    id: {
+    user_ID: {
         type: mongoose.Schema.ObjectId,
         ref: "User",
     },
-    name: String,
+    user_Name: String,
+  },
+  room: {
+    type: mongoose.Schema.ObjectId,
+    ref: "Room",
   },
 },
   {timestmap: true }
 );
 
 // 모델 생성
-const User = mongoose.model('Chat', chatSchema);
+const Chat = mongoose.model('Chat', chatSchema);
 
-module.exports = User;
+module.exports = Chat;
