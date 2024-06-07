@@ -17,7 +17,7 @@ router.post('/posts/:userID', postsController.post_View);
 router.post('/editpost/:productId', upload.single('postImage'),postsController.editPost);
 
 // 게시물 삭제 앤드포인트
-router.post('/deletepost/:userID', postsController.deletePost);
+router.post('/deletepost/:productId', postsController.deletePost);
 
 
 module.exports = router;

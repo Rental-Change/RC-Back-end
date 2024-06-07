@@ -133,17 +133,19 @@ exports.editPost = async (req, res, next) => {
 //삭제
 exports.deletePost = async (req, res, next) => {    
     try {
-        const { userID } = req.params;
-        const { postID } = req.body;
+        // const { postID } = req.params;
+        const { userID, productId } = req.body;
+        console.log(userID)
+        console.log(productId)
 
         // Check if the user is authorized to delete the post
-        const post = await Post.findOne({ _id: postID, user_ID: userID });
+        const post = await Post.findOne({ _id: productId, user_ID: userID });
         if (!post) {
             throw new Error('Post not found or you are not authorized to delete this post');
         }
 
         // Delete the post
-        await Post.deleteOne({ _id: postID, user_ID: userID });
+        await Post.deleteOne({ _id: productId, user_ID: userID });
 
         res.status(200).send({ message: 'Post deleted successfully' });
         
