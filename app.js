@@ -1,3 +1,4 @@
+//app.js
 const express = require("express");
 const mongoose = require("mongoose");
 require('dotenv').config();
@@ -10,6 +11,7 @@ const signupRouter = require("./routers/signupRouter");
 const postsRouter = require('./routers/postsRouter');
 const viewRouter = require('./routers/listViewRouter');
 const bookMarkRouter = require('./routers/bookMarkRouter');
+const roomRouter = require('./routers/roomRouter')
 
 app.use(express.json());
 app.use(cors({
@@ -31,7 +33,11 @@ mongoose.connect(DBuri).then(() => {
 app.use('/signup', signupRouter);
 app.use('/signin', loginRouter);
 app.use('/', viewRouter);
+// 매장 등록
 app.use('/', postsRouter);
+// 북마크
 app.use('/', bookMarkRouter );
+// 채팅방
+app.use('/', roomRouter );
 
 module.exports = app;

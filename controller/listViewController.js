@@ -29,12 +29,12 @@ try {
         throw new Error('요청에서 userID를 찾을 수 없습니다.');
       }
 
-    const userobjID = await User.findOne( { user_ID : userID })
-    if (!userobjID) {
+    const user = await User.findOne( { user_ID : userID })
+    if (!user) {
         throw new Error('해당하는 유저를 찾을 수 없습니다.');
       }
   
-    const myList = await Post.find({ user : userobjID._id });
+    const myList = await Post.find({ user : user._id });
     res.status(200).json(myList);
 
     } catch (error) {
@@ -50,22 +50,25 @@ try {
     if (!userID) {
         throw new Error('요청에서 userID를 찾을 수 없습니다.');
       }
-
     const user = await User.findOne( { user_ID : userID })
     if (!user) {
-        throw new Error('해당하는 유저를 찾을 수 없습니다.');
+          throw new Error('해당하는 유저를 찾을 수 없습니다.');
       }
-    console.log( user )
-    const bookMark = await BookMark.find({ user : user._id });
+    
+    const userBookmark = await BookMark.find( { user : user._id })
+    if (!userBookmark || userBookmark.length === 0) {
+      throw new Error('해당하는 유저의 북마크를 찾을 수 없습니다.');
+  }
 
-    if (!bookMark) {
-      console.log("등록된 북마크가 없습니다.")
-    }
+  // Extract post IDs from userBookmarks
+  const postIDs = userBookmark.map(bookmark => bookmark.post);
 
-    res.status(200).json(bookMark);
-
+  // Fetch posts by the extracted post IDs
+  const bookMarkList = await Post.find({ _id: { $in: postIDs } });
+  res.status(200).json(bookMarkList);
     } catch (error) {
         console.error('Error fetching posts:', error);
         res.status(500).send('Internal Server Error');
     }    
 }
+

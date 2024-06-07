@@ -3,7 +3,6 @@ const chatController ={};
 const moment = require('moment')
 
 
-
 exports.saveChat = async (message,user) =>{
     const date = moment().format('YYYY-MM-DD HH:mm:ss')
     console.log(date)
