@@ -56,9 +56,7 @@ try {
       }
     
     const userBookmark = await BookMark.find( { user : user._id })
-    if (!userBookmark || userBookmark.length === 0) {
-      throw new Error('해당하는 유저의 북마크를 찾을 수 없습니다.');
-  }
+    
 
   // Extract post IDs from userBookmarks
   const postIDs = userBookmark.map(bookmark => bookmark.post);

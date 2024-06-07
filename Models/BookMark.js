@@ -11,9 +11,7 @@ const BookMarkschema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
             ref: 'Post',
             required: true
-        },
-    status: Boolean,
-   
+        }, 
   });
 
 const BookMark = mongoose.model('BookMark', BookMarkschema);

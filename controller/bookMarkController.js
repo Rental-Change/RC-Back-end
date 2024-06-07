@@ -11,8 +11,6 @@ exports.addBookMark = async (req, res, next) => {
         // Find user and post by ID
         const user = await User.findOne({ user_ID: userID });
         const post = await Post.findById( postID );
-        console.log(user);
-        console.log(post);
 
         if (!user || !post) {
             return res.status(404).json({ msg: 'User or Post not found' });
@@ -28,11 +26,9 @@ exports.addBookMark = async (req, res, next) => {
         const bookmark = new BookMark({
             user: user._id,
             post: post._id,
-            status: true,
         });
        
         await bookmark.save();
-        console.log(bookmark);
         res.status(201).json({ msg: 'Bookmark added successfully' });
 
     } catch (err) {

@@ -14,10 +14,10 @@ router.post('/posts/:userID', postsController.post_View);
 // router.get('/editpost/:userID', postsController.getEdit );
 
 // 게시물 수정 앤드포인트
-router.post('/editpost/:userID', postsController.editPost);
+router.post('/posts/editpost/:userID', postsController.editPost);
 
 // 게시물 삭제 앤드포인트
-router.post('/deletepost/:userID', postsController.deletePost);
+router.post('/posts/deletepost/:userID', postsController.deletePost);
 
 
 module.exports = router;

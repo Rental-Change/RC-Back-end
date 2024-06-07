@@ -17,9 +17,9 @@ exports.createPost = async(req, res,next) => {
             return res.status(400).json({ error: 'No file uploaded' });
         }
         
-        const { userID, title, amount, period, content, status } = req.body
+        const { userid, username ,title, amount, period, content, status } = req.body
     
-        const objID = await User.findOne( { user_ID : userID })
+        const objID = await User.findOne( { user_ID : userid })
 
         const postImage = {
             data: req.file.buffer,
@@ -28,12 +28,12 @@ exports.createPost = async(req, res,next) => {
         
         const post = new Post({
             user: objID._id,
-            userID: userID,
+            userID: userid,
+            userName: username,
             postTitle: title,
             postAmount: amount,
             postPeriod: period,
             postContent: content,
-            postStatus: status,
             postImage: postImage,
         });
         
@@ -94,7 +94,6 @@ exports.editPost = async(req, res, next) => {
             postAmount: amount,
             postPeriod: period,
             postContent: content,
-            postStatus: status,
             postImage: postImage, 
         };
 
