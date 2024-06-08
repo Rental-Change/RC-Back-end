@@ -8,7 +8,7 @@ const upload = require('../utils/upload')
 router.post('/posts', upload.single('postImage'), postsController.createPost );
 
 // 게시물 상세 페이지 접근 앤드포인트
-router.post('/posts/:userID', postsController.post_View);
+router.post('/posts/:productId', postsController.post_View);
 
 // 게시물 수정페이지 접근 앤드포인트
 // router.get('/editpost/:userID', postsController.getEdit );

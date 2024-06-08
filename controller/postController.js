@@ -49,13 +49,11 @@ exports.createPost = async (req, res, next) => {
 // 게시물 상세 페이지
 exports.post_View = async (req, res) => {
 try {
-    const { userID } = req.params;
-    const { postID } = req.params;
-    console.log( postID )
-    console.log( userID )
+    const { productId } = req.body;
+    console.log(productId)
     // const postView = DB.collection('posts').findOne({ _id : req.params.id })
     // res.redirect('/',{ postView })
-    const postView = await Post.findOne( { _id : postID });
+    const postView = await Post.findOne( { _id : productId });
     res.status(200).json(postView);
 
     } catch (error) {
