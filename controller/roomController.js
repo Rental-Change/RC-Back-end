@@ -37,6 +37,9 @@ exports.createRoom = async ( req, res ) => {
     });
 
     await newRoom.save();
+
+    res.status(200).json("성공");
+
     // const room = await Room.findById(roomId);
     // if (!room) {
     //     throw new Error("해당 방이 없습니다.");
