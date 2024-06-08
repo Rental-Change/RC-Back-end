@@ -12,6 +12,7 @@ const postsRouter = require('./routers/postsRouter');
 const viewRouter = require('./routers/listViewRouter');
 const bookMarkRouter = require('./routers/bookMarkRouter');
 const roomRouter = require('./routers/roomRouter')
+const chatRouter = require('./routers/chatRouter')
 
 app.use(express.json());
 app.use(cors({
@@ -39,5 +40,7 @@ app.use('/', postsRouter);
 app.use('/', bookMarkRouter );
 // 채팅방
 app.use('/', roomRouter );
+// 메시지
+app.use('/', chatRouter );
 
 module.exports = app;

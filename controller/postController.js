@@ -137,13 +137,13 @@ exports.deletePost = async (req, res, next) => {
         console.log(productId)
 
         // Check if the user is authorized to delete the post
-        const post = await Post.findOne({ _id: productId, user_ID: userID });
+        const post = await Post.findOne({ _id: productId, userID: userID });
         if (!post) {
             throw new Error('Post not found or you are not authorized to delete this post');
         }
 
         // Delete the post
-        await Post.deleteOne({ _id: productId, user_ID: userID });
+        await Post.deleteOne({ _id: productId, userID: userID });
 
         res.status(200).send({ message: 'Post deleted successfully' });
         
@@ -151,4 +151,5 @@ exports.deletePost = async (req, res, next) => {
         next(err);
     }
 };
+
 
