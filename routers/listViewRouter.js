@@ -9,5 +9,6 @@ router.get('/', listViewController.all_List);
 router.get('/:userID/mylist', listViewController.my_List);
 // 좋아요한 게시물
 router.get('/:userID/bookmarklist', listViewController.bookMark_List);
-
+// 거래 중인 게시물
+router.get('/:userID/statuslist', listViewController.status_List);
 module.exports = router;

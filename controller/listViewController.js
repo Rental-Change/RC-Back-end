@@ -64,3 +64,29 @@ try {
     }    
 }
 
+exports.status_List = async (req, res) => {
+  try {
+      const { userID } = req.params;
+
+      console.log(status);
+
+      if (!userID) {
+          throw new Error('요청에서 userID를 찾을 수 없습니다.');
+        }
+  
+      const user = await User.findOne( { user_ID : userID })
+      if (!user) {
+          throw new Error('해당하는 유저를 찾을 수 없습니다.');
+        }
+        const statusList = await Post.find({ 
+          user: user._id,
+          status: { $in: ["예약 중", "거래 중"] }
+        });
+        
+      res.status(200).json(statusList);
+  
+      } catch (error) {
+          console.error('Error fetching posts:', error);
+          res.status(500).send('Internal Server Error');
+      }    
+  }
