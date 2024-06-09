@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
 // 채팅 정보를 담을 스키마 정의
 const chatSchema = new mongoose.Schema({
@@ -18,6 +19,7 @@ const chatSchema = new mongoose.Schema({
     room: { type: String, required: true },
 });
 
-const Chat = mongoose.model('Chat', chatSchema);
+// 모델 생성
+const User = mongoose.model('Chat', chatSchema);
 
-module.exports = Chat;
+module.exports = User;
