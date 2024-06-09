@@ -68,8 +68,6 @@ exports.status_List = async (req, res) => {
   try {
       const { userID } = req.params;
 
-      console.log(status);
-
       if (!userID) {
           throw new Error('요청에서 userID를 찾을 수 없습니다.');
         }
@@ -80,7 +78,7 @@ exports.status_List = async (req, res) => {
         }
         const statusList = await Post.find({ 
           user: user._id,
-          status: { $in: ["예약 중", "거래 중"] }
+          postStatus: { $in: ["예약 중", "거래 중"] }
         });
         
       res.status(200).json(statusList);

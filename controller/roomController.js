@@ -64,20 +64,20 @@ exports.createRoom = async ( req, res ) => {
 
 exports.leaveRoom = async (req, res) => {
     try {
-        const { myid, postid } = req.body;
-
-        const room = await Room.findOne({ my_ID: myid , postUser_ID: postid});
+        const { roomID } = req.params;
+        
+        const room = await Room.findOne({ _id : roomID});
         if (!room) {
             throw new Error("Room not found");
         }
-
         // 채팅방 삭제
-        await Room.deleteOne({ my_ID: myid , postUser_ID: postid });
+        await Room.deleteOne({ _id : room._id });
         // 삭제한 채팅방의 채팅 내용 삭제
         await Chat.deleteMany({ room : room._id })
+
+        res.status(200).json("삭제 완료");
 
     } catch (error) {
         res.status(500).json({ message: '서버 오류', error });
     }
-    
 };
