@@ -1,15 +1,11 @@
 //listViewController.js
-const Like = require('../Models/BookMark');
+const BookMark = require('../Models/BookMark');
 const Post = require('../Models/Post')
 const User = require('../Models/User');
-const mongoose = require('mongoose');
-const DB = mongoose;
+
 //전체 게시물 보여주기
 exports.all_List = async (req, res) => {
     try {
-    // const allList = DB.collection('posts').find()
-    // res.redirect('/', { allList });
-    
     const allList = await Post.find();
     res.status(200).json(allList);
 
@@ -21,21 +17,18 @@ exports.all_List = async (req, res) => {
 // 사용자가 쓴 게시물 보여주기
 exports.my_List = async (req, res) => {
 try {
-    //const myList = DB.collection('posts').find({ user_ID : userID })
-    //res.redirect('/',{ myList })
     const { userID } = req.params;
-    console.log(userID);
 
     if (!userID) {
         throw new Error('요청에서 userID를 찾을 수 없습니다.');
       }
 
-    const objID = await User.findOne( { user_ID : userID })
-    if (!objID) {
+    const user = await User.findOne( { user_ID : userID })
+    if (!user) {
         throw new Error('해당하는 유저를 찾을 수 없습니다.');
       }
   
-    const myList = await Post.find({ user : objID._id });
+    const myList = await Post.find({ user : user._id });
     res.status(200).json(myList);
 
     } catch (error) {
@@ -44,23 +37,27 @@ try {
     }    
 }
 // 좋아요 누른 게시물 보여주기
-exports.like_List = async (req, res) => {
+exports.bookMark_List = async (req, res) => {
 try {
     const { userID } = req.params;
-    console.log(userID);
 
     if (!userID) {
         throw new Error('요청에서 userID를 찾을 수 없습니다.');
       }
-
-    const userObjID = await User.findOne( { user_ID : userID })
-    if (!userObjID) {
-        throw new Error('해당하는 유저를 찾을 수 없습니다.');
+    const user = await User.findOne( { user_ID : userID })
+    if (!user) {
+          throw new Error('해당하는 유저를 찾을 수 없습니다.');
       }
+    
+    const userBookmark = await BookMark.find( { user : user._id })
+    
 
-    const likeList = await Like.find({ user : userObjID._id , postLike : true });
-    res.status(200).json(likeList);
+  // Extract post IDs from userBookmarks
+  const postIDs = userBookmark.map(bookmark => bookmark.post);
 
+  // Fetch posts by the extracted post IDs
+  const bookMarkList = await Post.find({ _id: { $in: postIDs } });
+  res.status(200).json(bookMarkList);
     } catch (error) {
         console.error('Error fetching posts:', error);
         res.status(500).send('Internal Server Error');

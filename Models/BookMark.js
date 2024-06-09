@@ -1,7 +1,7 @@
+//BookMark.js
 const mongoose = require('mongoose');
-const User = require('./User')
 
-const likeschema = new mongoose.Schema({
+const BookMarkschema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
             ref: 'User',
@@ -11,12 +11,9 @@ const likeschema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
             ref: 'Post',
             required: true
-        },
-
-    postLike: Boolean
-    
+        }, 
   });
 
-const Like = mongoose.model('Like', likeschema);
+const BookMark = mongoose.model('BookMark', BookMarkschema);
 
-module.exports = Like;
+module.exports = BookMark;
