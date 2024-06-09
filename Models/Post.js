@@ -35,7 +35,6 @@ const postSchema = new mongoose.Schema({
         filePath: String,
     },
 
-    postLike: Boolean,
 
   });
 

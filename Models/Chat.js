@@ -19,6 +19,6 @@ const chatSchema = new mongoose.Schema({
 });
 
 // 모델 생성
-const User = mongoose.model('Chat', chatSchema);
+const Chat = mongoose.model('Chat', chatSchema);
 
-module.exports = User;
+module.exports = Chat;

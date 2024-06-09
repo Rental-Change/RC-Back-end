@@ -1,19 +1,17 @@
-const moment = require('moment');
+
 const Chat = require("../Models/Chat");
 const User = require("../Models/User");
 
 exports.saveChat = async (message, user) => {
     try {
-        const date = moment().format('YYYY-MM-DD HH:mm:ss');
-        console.log(date);
-        console.log(user._id); // 확인용으로 사용자 ID 출력
+        console.log(user); // 확인용으로 사용자 ID 출력
 
         // 사용자를 사용자 ID를 기반으로 찾습니다.
         const newMessage = new Chat({
             chat: message,
             receiverID: user.receiverID, // 메시지를 받는 사용자의 ID
             senderID: user.senderID, // 메시지를 보내는 사용자의 ID
-            createdAt: date,
+            createdAt: user.createdAt,
             room: user.room,
         });
         await newMessage.save();
