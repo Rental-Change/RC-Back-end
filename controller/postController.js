@@ -1,10 +1,6 @@
 //postControlloer.js
 const Post = require('../Models/Post')
 const User = require('../Models/User')
-const Like = require('../Models/BookMark')
-const mongoose = require('mongoose');
-const { Types: { ObjectId } } = mongoose;
-const DB = mongoose;
 
 // 작성
 exports.createPost = async (req, res, next) => {
@@ -34,6 +30,7 @@ exports.createPost = async (req, res, next) => {
             postPeriod: period,
             postContent: content,
             postImage: postImage,
+            postStatus: status,
         });
         
         console.log("받은 데이터: ", post);
@@ -50,10 +47,9 @@ exports.createPost = async (req, res, next) => {
 exports.post_View = async (req, res) => {
 try {
     const { productId } = req.body;
-    console.log(productId)
-    // const postView = DB.collection('posts').findOne({ _id : req.params.id })
-    // res.redirect('/',{ postView })
+
     const postView = await Post.findOne( { _id : productId });
+    
     res.status(200).json(postView);
 
     } catch (error) {
@@ -62,28 +58,10 @@ try {
     }    
 }
 
-// exports.getEdit = async (req, res, next) => {
-//     const { userID } = req.params;
-//     const { postID } = req.body;
-    
-//     const post = await Post.findOne({ user_ID : userID, _id : postID });
-//     console.log(post)
-
-//     if (!post) {
-//         next(new Error('Post NotFound'));
-//         return;
-//     }
-//     //수정페이지
-//     if (req.query.edit) {
-//         res.render('/posts/edit', { post });
-//         return;
-//     }
-//     res.render('/posts', { post });
-// }; 
 //수정
 exports.editPost = async (req, res, next) => {
-  const { userID, title, amount, period, content, obj } = req.body;
-  console.log(userID, title, amount, period, content, obj)
+  const { userID, title, amount, period, content, status, obj } = req.body;
+  console.log(userID, title, amount, period, content, status, obj)
   try {
     // Find the post by _id
     const post = await Post.findOne({ _id: obj });
@@ -107,7 +85,8 @@ exports.editPost = async (req, res, next) => {
       postAmount: amount,
       postPeriod: period,
       postContent: content,
-      postImage: postImage
+      postImage: postImage,
+      postStatus: status,
     };
 
     console.log(updateFields)
@@ -151,5 +130,3 @@ exports.deletePost = async (req, res, next) => {
         next(err);
     }
 };
-
-
