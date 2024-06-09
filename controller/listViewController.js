@@ -2,14 +2,10 @@
 const BookMark = require('../Models/BookMark');
 const Post = require('../Models/Post')
 const User = require('../Models/User');
-const mongoose = require('mongoose');
 
 //전체 게시물 보여주기
 exports.all_List = async (req, res) => {
     try {
-    // const allList = DB.collection('posts').find()
-    // res.redirect('/', { allList });
-    
     const allList = await Post.find();
     res.status(200).json(allList);
 
@@ -21,8 +17,6 @@ exports.all_List = async (req, res) => {
 // 사용자가 쓴 게시물 보여주기
 exports.my_List = async (req, res) => {
 try {
-    //const myList = DB.collection('posts').find({ user_ID : userID })
-    //res.redirect('/',{ myList })
     const { userID } = req.params;
 
     if (!userID) {

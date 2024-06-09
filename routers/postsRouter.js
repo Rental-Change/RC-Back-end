@@ -8,16 +8,16 @@ const upload = require('../utils/upload')
 router.post('/posts', upload.single('postImage'), postsController.createPost );
 
 // 게시물 상세 페이지 접근 앤드포인트
-router.post('/posts/:userID', postsController.post_View);
+router.post('/posts/:productId', postsController.post_View);
 
 // 게시물 수정페이지 접근 앤드포인트
 // router.get('/editpost/:userID', postsController.getEdit );
 
 // 게시물 수정 앤드포인트
-router.post('/posts/editpost/:userID', postsController.editPost);
+router.post('/editpost/:productId', upload.single('postImage'),postsController.editPost);
 
 // 게시물 삭제 앤드포인트
-router.post('/posts/deletepost/:userID', postsController.deletePost);
+router.post('/deletepost/:productId', postsController.deletePost);
 
 
 module.exports = router;

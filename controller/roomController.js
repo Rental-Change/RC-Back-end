@@ -1,83 +1,83 @@
 //roomController.js
 const Room = require("../Models/Room");
 const User = require("../Models/User");
-
+const Chat = require("../Models/Chat");
 
 exports.getAllRooms = async ( req, res ) => { 
     try {
         const { userID } = req.params;
+        
         const myID = await User.findOne({ user_ID : userID });
-        const postUserID = await User.findOne({ user_ID : postUserID });
         const roomList = await Room.find({
             $or: [
-                { my_ID: myID._id },
-                { postUser_ID : myID._id}
+              { my_ID: myID },
+              { postUser_ID: myID }
             ]
-        }).populate('my_ID','user_ID user_Name').populate('postUser_ID', 'user_ID user_Name');
-        res.status(200).json(roomList);
+          }).populate('my_ID','user_ID user_Name').populate('postUser_ID', 'user_ID user_Name');
+        
+          res.status(200).json(roomList);
+
     } catch (error) {
         res.status(500).json({ message: '서버 오류', error });
     }
 }
 
 exports.createRoom = async ( req, res ) => {
-    const { myid, postid, postTitle } = req.body;
-
-    if ( !myid || !postid ) {
-        console.log("사용자를 찾을 수 없습니다.");
-        return;
-    }
-    const myID = await User.findOne({ user_ID : myid });
-    const postID = await User.findOne({ user_ID : postid });
-    if (!myID || !postID) {
-        return res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
-    }
-
-    // 중복 방 체크
-    const existingRoom = await Room.findOne({
-        $or: [
-            { my_ID: myID._id, postUser_ID: postID._id },
-            { my_ID: postID._id, postUser_ID: myID._id }
-        ]
-    });
-
-    if (existingRoom) {
-        return res.status(400).json({ message: '이미 존재하는 방입니다.' });
-    }
-
-    const newRoom = new Room({
-        roomName : postTitle,
-        my_ID: myID._id,
-        postUser_ID: postID._id,
-        // members : [ myID._id, postID._id ],
-    });
-
-    await newRoom.save();
-    res.status(201).json({ message: '새로운 방이 생성되었습니다.', room: newRoom });
-};
-
-// 채팅방을 떠나는 함수
-exports.leaveRoom = async (req, res) => {
-    const { myid, postid } = req.body;
-
     try {
-        const myID = await User.findOne({ user_ID: myid });
-        const postID = await User.findOne({ user_ID: postid });
+        const { myid, postid, postTitle } = req.body;
 
-        if (!myID || !postID) {
-            return res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
+        if ( !myid || !postid ) {
+            console.log("사용자를 찾을 수 없습니다.");
+            return;
+        }
+        const myID = await User.findOne({ user_ID : myid });
+        const postID = await User.findOne({ user_ID : postid });
+        
+        // 동일한 채팅방이 이미 있는지 확인
+        const existingRoom = await Room.findOne({
+            my_ID: myID._id,
+            postUser_ID: postID._id,
+            roomName: postTitle
+        });
+
+        if (existingRoom) {
+            console.log("이미 존재하는 방입니다.");
+            res.status(409).json({ message: "이미 존재하는 방입니다." });
+            return;
         }
 
-        const room = await Room.findOne({ my_ID: myID._id, postUser_ID: postID._id });
+        const newRoom = new Room({
+            roomName : postTitle,
+            my_ID: myID._id,
+            postUser_ID: postID._id,
+        });
 
-        if (!room) {
-            return res.status(404).json({ message: '방을 찾을 수 없습니다.' });
-        }
+        await newRoom.save();
 
-        await Room.deleteOne({ _id: room._id });
+        res.status(200).json("성공");
 
-        res.status(200).json({ message: '방을 떠났습니다.' });
     } catch (error) {
         res.status(500).json({ message: '서버 오류', error });
     }
+
+};
+
+exports.leaveRoom = async (req, res) => {
+    try {
+        const { myid, postid } = req.body;
+
+        const room = await Room.findOne({ my_ID: myid , postUser_ID: postid});
+        if (!room) {
+            throw new Error("Room not found");
+        }
+
+        // 채팅방 삭제
+        await Room.deleteOne({ my_ID: myid , postUser_ID: postid });
+        // 삭제한 채팅방의 채팅 내용 삭제
+        await Chat.deleteMany({ room : room._id })
+
+    } catch (error) {
+        res.status(500).json({ message: '서버 오류', error });
+    }
+    
 };

@@ -34,9 +34,9 @@ const postSchema = new mongoose.Schema({
         contentType: String,
         filePath: String,
     },
-
-    postLike: Boolean,
-
+    postStatus: { 
+        type: String 
+    },
   });
 
 const Post = mongoose.model('Post', postSchema);

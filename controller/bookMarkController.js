@@ -2,13 +2,11 @@
 const Post = require('../Models/Post');
 const User = require('../Models/User');
 const BookMark = require('../Models/BookMark');
-const mongoose = require('mongoose');
 
 exports.addBookMark = async (req, res, next) => {
     try {
         const { userID, postID } = req.body;
 
-        // Find user and post by ID
         const user = await User.findOne({ user_ID: userID });
         const post = await Post.findById( postID );
 
@@ -37,8 +35,9 @@ exports.addBookMark = async (req, res, next) => {
 };
 
 exports.deleteBookMark = async (req, res, next) => {
-    const { userID, postID } = req.body;
     try {
+        const { userID, postID } = req.body;
+
         const user = await User.findOne({ user_ID: userID });
         const post = await Post.findById( postID );
 
