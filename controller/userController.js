@@ -1,3 +1,4 @@
+//userController.js
 const User = require('../Models/User');
 const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken'); // jwt 토큰 사용을 위해 모듈 불러오기
@@ -37,17 +38,13 @@ exports.createUser = async (req, res) => {
 //로그인
 exports.loginUser = async (req, res) => {
   try {
-    const userData = req.body;
-
-    const { id, password } = userData;
-    
+    const { id, password } = req.body;
     const user = await User.findOne({ user_ID: id });
     
     // 회원 정보 유효성 검사
     if (!user) {
       return res.status(401).json({ success: false, message: '사용자가 존재하지 않습니다.' });
     }
-
     // 비밀번호 유효성 검사
     const isPasswordValid = await bcrypt.compare(password, user.user_PW);
     if (!isPasswordValid) {
@@ -58,13 +55,10 @@ exports.loginUser = async (req, res) => {
     const payload = {
       userId: user.id,
     };
-
     // 액세스 토큰 생성
     const accessToken = generateAccessToken(payload);
-
     // 리프레시 토큰 생성
     const refreshToken = generateRefreshToken(payload);
-
     // 생성된 토큰들을 클라이언트에 응답으로 보냅니다.
     res.cookie('refreshToken', refreshToken, {
             expires: new Date(Date.now() + 3600000),

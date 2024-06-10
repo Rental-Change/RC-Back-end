@@ -25,7 +25,7 @@ exports.saveChat = async (message, user) => {
 
 exports.getChat = async (req, res) => {
     const { roomId } = req.params; // roomId를 올바르게 추출합니다.
-    console.log(roomId);
+    console.log("roomid: ", roomId);
     try {
       // 해당 채팅방의 이전 채팅 기록을 조회
       const messages = await Chat.find({ room: roomId }).sort({ createdAt: 'asc' });
